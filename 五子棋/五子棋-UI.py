@@ -8,10 +8,11 @@ s = []
 num = 0
 
 
+# 静态布局
 class WinGUI(Tk):
     def __init__(self):
         super().__init__()
-        self.canvas = Canvas(self, width=650, height=650, background='#D2BE96')   # #f5eeee
+        self.canvas = Canvas(self, width=650, height=650, background='#D2BE96')  # #f5eeee
         self.canvas.pack(side=LEFT)
         self.game_line()
         self.win()
@@ -31,7 +32,7 @@ class WinGUI(Tk):
         screenheight = self.winfo_screenheight()
         geometry = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         self.geometry(geometry)
-        self.resizable(width=False, height=False)     # 窗口大小不可调节
+        self.resizable(width=False, height=False)  # 窗口大小不可调节
 
     # 画棋盘线(n*n)
     def game_line(self):
@@ -93,10 +94,12 @@ class WinGUI(Tk):
         return label
 
 
+# 动态布局
 class Win(WinGUI):
     def __init__(self):
         super().__init__()
         self.__event_bind()
+        self.predict = None
 
     # 事件绑定
     def __event_bind(self):
@@ -104,7 +107,7 @@ class Win(WinGUI):
         self.restart_button.bind("<Button -1>", self.restart)
         self.back_button.bind("<Button -1>", self.back)
         self.AI_button.bind("<Button -1>", self.AI)
-        # self.w.bind("<Motion>",self.game_rules)
+        self.canvas.bind("<Motion>",self.game_rules)
 
     # 重开新局
     def restart(self, event):

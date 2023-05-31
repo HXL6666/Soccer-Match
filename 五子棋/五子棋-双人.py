@@ -9,22 +9,22 @@ s = []
 num = 0
 
 
-class WinGUI(Tk):
+class WinGUI(Tk):       # 静态布局
     def __init__(self):
         super().__init__()
-        self.canvas = Canvas(self, width=650, height=650, background='#f5eeee')
+        self.canvas = Canvas(self, width=650, height=650, background="#D2BE96")
         self.canvas.pack(side=LEFT)
         self.game_line()
-        self.__win()
+        self.win()
         self.chessman_black_label = self.__chessman_black_label()
         self.chessman_white_label = self.__chessman_white_label()
         self.restart_button = self.__restart_button()
         self.back_button = self.__back_button()
         self.AI_button = self.__AI_button()
         self.quit_button = self.__quit_button()
-        self.canvas = Canvas(self, width=650, height=650, background="#D2BE96")
 
-    def __win(self):            # 使窗口居中
+
+    def win(self):            # 使窗口居中
         self.title("双人五子棋")
         width = 900
         height = 650
@@ -93,10 +93,11 @@ class WinGUI(Tk):
         return label
 
 
-class Win(WinGUI):
+class Win(WinGUI):      # 动态布局
     def __init__(self):
         super().__init__()
         self.__event_bind()
+        self.predict=None
 
     def load(self):  # 通过数组还原棋子布局
         global l
@@ -116,7 +117,7 @@ class Win(WinGUI):
         self.restart_button.bind("<Button -1>", self.restart)
         self.back_button.bind("<Button -1>", self.back)
         self.AI_button.bind("<Button -1>", self.AI)
-        # self.w.bind("<Motion>",self.game_rules)
+        self.canvas.bind("<Motion>", self.game_rules)
 
     def restart(self, event):  # 重开新局
         global l
@@ -136,7 +137,8 @@ class Win(WinGUI):
         messagebox.showinfo("Warning", "功能开发中。。。")
         pass
 
-    def down(self, event):  # 落子
+
+    def down(self, event):
         global num, l, s
         # if (30 <= event.x <= 620) and (30 <= event.y <= 620):  # 边界判断
         for j in range(0, 15):
@@ -158,7 +160,8 @@ class Win(WinGUI):
         self.game_rule(i, j)  # 判断
         # self.after(100,self.select_color_label)
 
-    def game_rule(self, i, j):  # 游戏规则判断输赢
+    # 游戏规则,判断输赢
+    def game_rule(self, i, j):
         global l
         count1, count2, result = 0, 0, 0
         m, n = i, j
@@ -227,16 +230,19 @@ class Win(WinGUI):
             l = np.full([15, 15], 0)  # 重置
             self.load()
 
-    # def game_rules(self,event):
-    #     for i in range(45, 645, 40):
-    #         for j in range(45, 645, 40):
-    #             l1 = i - 15
-    #             l2 = i + 15
-    #             r1 = j - 15
-    #             r2 = j + 15
-    #             if l1 <= event.x <= l2 and r1 <= event.y <= r2:
-    #                 self.w.create_rectangle(i - 15, j - 15, i + 15, j + 15, dash=(1, 1), outline="blue")
-    #                 self.w.pack()
+    # 落点提示,矩形方框
+    def game_rules(self, event):
+        if self.predict:        # 不断删除，不断更新
+            self.canvas.delete(self.predict)
+        for i in range(45, 645, 40):
+            for j in range(45, 645, 40):
+                l1 = i - 15
+                l2 = i + 15
+                r1 = j - 15
+                r2 = j + 15
+                if l1 <= event.x <= l2 and r1 <= event.y <= r2:
+                    self.predict = self.canvas.create_rectangle(i - 15, j - 15, i + 15, j + 15, dash=(3, 1), outline="blue")
+
 
 
 if __name__ == "__main__":

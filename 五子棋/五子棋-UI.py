@@ -107,7 +107,7 @@ class Win(WinGUI):
         self.restart_button.bind("<Button -1>", self.restart)
         self.back_button.bind("<Button -1>", self.back)
         self.AI_button.bind("<Button -1>", self.AI)
-        self.canvas.bind("<Motion>",self.game_rules)
+        self.canvas.bind("<Motion>", self.game_rules)
 
     # 重开新局
     def restart(self, event):
@@ -139,6 +139,7 @@ class Win(WinGUI):
                 else:
                     continue
 
+    # 智能ai
     def AI(self, event):
         messagebox.showinfo("Warning", "功能开发中。。。")
         pass
@@ -170,15 +171,21 @@ class Win(WinGUI):
     def game_rules(self, event):
         if self.predict:  # 不断删除，不断更新
             self.canvas.delete(self.predict)
-        for i in range(45, 645, 40):
-            for j in range(45, 645, 40):
-                l1 = i - 15
-                l2 = i + 15
-                r1 = j - 15
-                r2 = j + 15
-                if l1 <= event.x <= l2 and r1 <= event.y <= r2:
-                    self.predict = self.canvas.create_rectangle(i - 15, j - 15, i + 15, j + 15, dash=(3, 1),
-                                                                outline="blue")
+        # for i in range(45, 645, 40):
+        #     for j in range(45, 645, 40):
+        #         l1 = i - 15
+        #         l2 = i + 15
+        #         r1 = j - 15
+        #         r2 = j + 15
+        #         if l1 <= event.x <= l2 and r1 <= event.y <= r2:
+        j = (event.x - 45) / 40
+        i = (event.y - 45) / 40  # 上临近i行，左临近j列，从左到右，从上到下
+        if (event.x - 45) % 40 > 20:
+            j += 1
+        if (event.y - 45) % 40 > 20:
+            i += 1
+        self.predict = self.canvas.create_rectangle(i - 15, j - 15, i + 15, j + 15, dash=(3, 1),
+                                                    outline="blue")
 
     # 游戏规则，判断输赢
     def game_rule(self, i, j):

@@ -52,11 +52,11 @@ for name, field in teams_stadium[:number]:
     teams.append(team)   # 一个包含球队实例的列表
 print("新赛季开始，一共有{}支球队进行比赛".format(number))
 
-table = PrettyTable()
-table.field_names = ['排名', '球队', '轮次', '胜/平/负', '进/失', '净胜球', '积分']
-table.align = 'c'
-table.max_width["球队"] = 30
-for i in range(number):
-    table.add_row([i + 1, teams[i].name, teams[i].round, teams[i].wdl(), teams[i].sc(), teams[i].goal_difference, teams[i].points])
-
-print(table.get_string())
+# table = PrettyTable()
+field_names = ['排名', '球队', '轮次', '胜/平/负', '进/失', '净胜球', '积分']
+# table.align = 'c'
+# table.max_width["球队"] = 30
+# for i in range(number):
+#     table.add_row([i + 1, teams[i].name, teams[i].round, teams[i].wdl(), teams[i].sc(), teams[i].goal_difference, teams[i].points])
+#
+# print(table.get_string())

@@ -1,5 +1,5 @@
 # -*- coding : utf-8 -*-
-from 足球模拟 import *
+from 足球赛程模拟器.足球模拟 import *
 from tkinter import *
 from random import *
 

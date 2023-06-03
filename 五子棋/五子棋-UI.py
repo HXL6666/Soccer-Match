@@ -169,15 +169,6 @@ class Win(WinGUI):
 
     # 落点提示,矩形方框
     def game_rules(self, event):
-        if self.predict:  # 不断删除，不断更新
-            self.canvas.delete(self.predict)
-        # for i in range(45, 645, 40):
-        #     for j in range(45, 645, 40):
-        #         l1 = i - 15
-        #         l2 = i + 15
-        #         r1 = j - 15
-        #         r2 = j + 15
-        #         if l1 <= event.x <= l2 and r1 <= event.y <= r2:
         j = (event.x - 45) / 40
         i = (event.y - 45) / 40  # 上临近i行，左临近j列，从左到右，从上到下
         if (event.x - 45) % 40 > 20:
@@ -186,6 +177,8 @@ class Win(WinGUI):
             i += 1
         self.predict = self.canvas.create_rectangle(i - 15, j - 15, i + 15, j + 15, dash=(3, 1),
                                                     outline="blue")
+        if self.predict:  # 不断删除，不断更新
+            self.canvas.delete(self.predict)
 
     # 游戏规则，判断输赢
     def game_rule(self, i, j):
@@ -220,7 +213,7 @@ class Win(WinGUI):
             count1, count2 = 0, 0
             i, j = m, n
 
-        # 正斜向判断\
+        # 正斜向判断
         while (i < 14) and (j < 14) and (l[i][j] == l[i + 1][j + 1]):
             j += 1
             i += 1

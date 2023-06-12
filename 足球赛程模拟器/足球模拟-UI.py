@@ -95,7 +95,7 @@ class Win(WinGUI):
 for name, field in teams_stadium[:number]:
     team = Team(name, field)
     teams.append(team)  # 一个包含球队实例的列表
-print("新赛季开始，一共有{}支球队进行比赛".format(number))
+# print("新赛季开始，一共有{}支球队进行比赛".format(number))
 
 if __name__ == "__main__":
     win = Win()

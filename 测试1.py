@@ -6,40 +6,32 @@ import numpy as np
 class WinGUI(Tk):
     def __init__(self):
         super().__init__()
-        self.canvas = Canvas(self, width=650, height=650, background='#D2BE96')  # #f5eeee
-        self.canvas.pack(side=LEFT)
-        self.game_line()
-        self.__event_bind()
-        self.predict = None
+        self.width = 900
+        self.height = 650
+        self.canvas = Canvas(self, width=self.width, height=self.height, background='#D2B48C')
+        self.canvas.pack()
+        self.count_num = self.__count_num()
 
+
+    def __count_num(self):
+        self.canvas.create_oval(700, 125, 720, 145, fill='black')
+        num_black = self.canvas.create_text(740, 135, text=0)
+        self.canvas.create_oval(800, 125, 820, 145, fill='white')
+        num_white = self.canvas.create_text(840, 135, text=0)
+        return num_black, num_white
+
+class Win(WinGUI):
+    def __init__(self):
+        super().__init__()
+        self.__event_bind()
 
     def __event_bind(self):
-        self.canvas.bind("<Motion>", self.game_rules)
+        self.canvas.bind("<Button -1>", self.load)
 
-    def game_line(self):
-        for i in range(15):
-            ww = 1
-            if (i == 0) or (i == 14):  # 边界加粗
-                ww = 2
-            self.canvas.create_line(45, i * 40 + 45, 605, i * 40 + 45, width=ww)  # 15条横线
-            self.canvas.create_text(30, i * 40 + 45, text=i + 1)  # 横坐标
-            self.canvas.create_line(i * 40 + 45, 45, i * 40 + 45, 605, width=ww)  # 15条竖线
-            self.canvas.create_text(i * 40 + 45, 30, text=i + 1)  # 纵坐标
-
-
-    def game_rules(self, event):
-        if 45 <= event.x <= 605 and 45 <= event.y <= 605:
-            i = (event.x - 45) // 40
-            j = (event.y - 45) // 40  # 上临近j行，左临近i列，从左到右，从上到下
-            if (event.x - 45) % 40 > 20:
-                i += 1
-            if (event.y - 45) % 40 > 20:
-                j += 1
-            self.predict = self.canvas.create_rectangle(i*40 + 30, j*40 + 30, i*40 + 60, j*40 + 60, dash=(1), outline="blue")
-            if self.predict:  # 不断删除，不断更新
-                self.canvas.after(70, self.canvas.delete, self.predict)
+    def load(self, event):
+        self.canvas.delete(ALL)
+        self.canvas.after(100, self.canvas.delete, self.predict)
 
 if __name__ == "__main__":
-    win = WinGUI()
-    win.config(background="#D2B48C")
+    win = Win()
     win.mainloop()

@@ -3,34 +3,37 @@ from tkinter import *
 from tkinter import messagebox  # 弹窗库
 import numpy as np
 
+# 全局变量
 l = np.full([15, 15], 0)
 s = []
-num = 0
+num = 0  # 步数
 
 
 # 静态布局
 class WinGUI(Tk):
     def __init__(self):
         super().__init__()
-        self.canvas = Canvas(self, width=650, height=650, background='#D2BE96')  # #f5eeee
-        self.canvas.pack(side=LEFT)
+        self.width = 900
+        self.height = 650
+        self.canvas = Canvas(self, width=self.width, height=self.height, background='#D2BE96')  # #f5eeee
+        self.canvas.pack()
         self.game_line()
         self.win()
         self.chessman_black_label = self.__chessman_black_label()
         self.chessman_white_label = self.__chessman_white_label()
+        self.count_num = self.__count_num()
         self.restart_button = self.__restart_button()
         self.back_button = self.__back_button()
         self.AI_button = self.__AI_button()
+        self.__set_button = self.__set_button()
         self.quit_button = self.__quit_button()
 
     # 使窗口居中
     def win(self):
         self.title("双人五子棋")
-        width = 900
-        height = 650
         screenwidth = self.winfo_screenwidth()
         screenheight = self.winfo_screenheight()
-        geometry = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        geometry = '%dx%d+%d+%d' % (self.width, self.height, (screenwidth - self.width) / 2, (screenheight - self.height) / 2)
         self.geometry(geometry)
         self.resizable(width=False, height=False)  # 窗口大小不可调节
 
@@ -50,6 +53,7 @@ class WinGUI(Tk):
         self.canvas.create_oval(160, 480, 170, 490, fill='black')
         self.canvas.create_oval(480, 480, 490, 490, fill='black')
         self.canvas.create_oval(320, 320, 330, 330, fill='black')
+        self.canvas.create_line(652, 0, 652, self.height, fill='white')
 
     def __chessman_black_label(self):
         label2 = Label(self, text="黑棋", font=("宋体", 20), background="#D2BE96")
@@ -64,6 +68,13 @@ class WinGUI(Tk):
         label1.place(x=750, y=60, width=60, height=35)
         label2.place(x=820, y=60, width=60, height=35)
         return label1, label2
+
+    def __count_num(self):
+        self.canvas.create_oval(700, 125, 720, 145, fill='black')
+        num_black = self.canvas.create_text(740, 135, text=0)
+        self.canvas.create_oval(800, 125, 820, 145, fill='white')
+        num_white = self.canvas.create_text(840, 135, text=0)
+        return num_black, num_white
 
     def __restart_button(self):
         btn = Button(self, text="新 局", font=("宋体", 20))
@@ -80,18 +91,15 @@ class WinGUI(Tk):
         btn.place(x=700, y=340, width=150, height=50)
         return btn
 
-    def __quit_button(self):
-        btn = Button(self, text="退 出", font=("宋体", 20), command=quit)
+    def __set_button(self):
+        btn = Button(self, text="设 置", font=("宋体", 20))
         btn.place(x=700, y=420, width=150, height=50)
         return btn
 
-    def select_color_label(self):
-        label = Label(self, text="-->", font=10, background="#D2BE96")
-        if num % 2 == 0:
-            label.place(x=680, y=20, width=60, height=35)
-        else:
-            label.place(x=680, y=60, width=60, height=35)
-        return label
+    def __quit_button(self):
+        btn = Button(self, text="退 出", font=("宋体", 20), command=quit)
+        btn.place(x=700, y=500, width=150, height=50)
+        return btn
 
 
 # 动态布局
@@ -100,6 +108,15 @@ class Win(WinGUI):
         super().__init__()
         self.__event_bind()
         self.predict = None
+
+    # 当前下棋方指示
+    def select_color_label(self):
+        label = Label(self, text="-->", font=10, background="#D2BE96")
+        if num % 2 == 0:
+            label.place(x=680, y=20, width=60, height=35)
+        else:
+            label.place(x=680, y=60, width=60, height=35)
+        return label
 
     # 事件绑定
     def __event_bind(self):
@@ -111,8 +128,9 @@ class Win(WinGUI):
 
     # 重开新局
     def restart(self, event):
-        global l
+        global l, num
         l = np.full([15, 15], 0)  # 数组归零
+        num = 0
         self.load()
 
     # 悔棋
@@ -147,6 +165,8 @@ class Win(WinGUI):
     # 落子
     def down(self, event):
         global num, l, s
+        num_black = 0
+        num_white = 0
         # if (30 <= event.x <= 620) and (30 <= event.y <= 620):  # 边界判断
         for j in range(0, 15):
             for i in range(0, 15):
@@ -157,10 +177,15 @@ class Win(WinGUI):
         if num % 2 == 0 and l[i][j] == 0:  # 黑子先下，走奇数
             self.canvas.create_oval(40 * i + 30, 40 * j + 30, 40 * i + 60, 40 * j + 60, fill='black')
             l[i][j] = 1
+            num_black += 1
+            self.canvas.itemconfig(self.count_num[0], text=num_black)
             num += 1
         elif num % 2 != 0 and l[i][j] == 0:  # 白子后下，走偶数
             self.canvas.create_oval(40 * i + 30, 40 * j + 30, 40 * i + 60, 40 * j + 60, fill='white')
             l[i][j] = -1
+            num_white += 1
+            self.canvas.itemconfig(self.count_num[1], text=num_white)
+
             num += 1
         s.append((i, j))  # 悔棋序列
         # print(s)
@@ -169,6 +194,9 @@ class Win(WinGUI):
 
     # 落点提示,矩形方框
     def game_rules(self, event):
+        down_next = "black"  # 方框颜色
+        if num % 2 != 0:
+            down_next = "white"
         if 45 <= event.x <= 605 and 45 <= event.y <= 605:
             i = (event.x - 45) // 40
             j = (event.y - 45) // 40  # 上临近j行，左临近i列，从左到右，从上到下
@@ -176,7 +204,8 @@ class Win(WinGUI):
                 i += 1
             if (event.y - 45) % 40 > 20:
                 j += 1
-            self.predict = self.canvas.create_rectangle(i*40 + 30, j*40 + 30, i*40 + 60, j*40 + 60, dash=(1), outline="blue")
+            self.predict = self.canvas.create_rectangle(i * 40 + 30, j * 40 + 30, i * 40 + 60, j * 40 + 60, dash=(1),
+                                                        outline=down_next)
             if self.predict:  # 不断删除，不断更新
                 self.canvas.after(70, self.canvas.delete, self.predict)
 

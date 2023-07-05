@@ -20,6 +20,11 @@ class WinGUI(Tk):
         num_white = self.canvas.create_text(840, 135, text=0)
         return num_black, num_white
 
+    def ss(self, event):
+        self.__count_num()
+        self.canvas.itemconfig(self.count_num[0], text=55)
+        self.canvas.update()  # 更新界面
+
 class Win(WinGUI):
     def __init__(self):
         super().__init__()
@@ -27,10 +32,11 @@ class Win(WinGUI):
 
     def __event_bind(self):
         self.canvas.bind("<Button -1>", self.load)
+        self.canvas.bind("<Button -3>", self.ss)
 
     def load(self, event):
         self.canvas.delete(ALL)
-        self.canvas.after(100, self.canvas.delete, self.predict)
+
 
 if __name__ == "__main__":
     win = Win()

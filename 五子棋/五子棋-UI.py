@@ -17,8 +17,8 @@ class WinGUI(Tk):
         self.height = 650
         self.canvas = Canvas(self, width=self.width, height=self.height, background='#D2BE96')  # #f5eeee
         self.canvas.pack()
-        self.game_line()
-        self.win()
+        self.__game_line()
+        self.__win()
         self.chessman_black_label = self.__chessman_black_label()
         self.chessman_white_label = self.__chessman_white_label()
         self.count_num = self.__count_num()
@@ -29,7 +29,7 @@ class WinGUI(Tk):
         self.quit_button = self.__quit_button()
 
     # 使窗口居中
-    def win(self):
+    def __win(self):
         self.title("双人五子棋")
         screenwidth = self.winfo_screenwidth()
         screenheight = self.winfo_screenheight()
@@ -38,7 +38,7 @@ class WinGUI(Tk):
         self.resizable(width=False, height=False)  # 窗口大小不可调节
 
     # 画棋盘线(n*n)
-    def game_line(self):
+    def __game_line(self):
         for i in range(15):
             ww = 1
             if (i == 0) or (i == 14):  # 边界加粗
@@ -68,6 +68,7 @@ class WinGUI(Tk):
         label1.place(x=750, y=60, width=60, height=35)
         label2.place(x=820, y=60, width=60, height=35)
         return label1, label2
+
 
     def __count_num(self):
         self.canvas.create_oval(700, 125, 720, 145, fill='black')
@@ -100,6 +101,11 @@ class WinGUI(Tk):
         btn = Button(self, text="退 出", font=("宋体", 20), command=quit)
         btn.place(x=700, y=500, width=150, height=50)
         return btn
+
+    # 让子类间接调用父类私有方法
+    def sss(self):
+        self.__game_line()
+        self.__count_num()
 
 
 # 动态布局
@@ -146,8 +152,8 @@ class Win(WinGUI):
     # 通过数组还原棋子布局
     def load(self):
         global l
-        self.canvas.delete(ALL)  # 删除画布，重新画线
-        self.game_line()
+        self.canvas.delete(ALL)  # 删除画布
+        self.sss()      # 重新画线以及其他画布元素
         for i in range(15):
             for j in range(15):
                 if l[i][j] == 1:
@@ -156,6 +162,8 @@ class Win(WinGUI):
                     self.canvas.create_oval(40 * i + 30, 40 * j + 30, 40 * i + 60, 40 * j + 60, fill='white')
                 else:
                     continue
+
+
 
     # 智能ai
     def AI(self, event):
@@ -185,7 +193,6 @@ class Win(WinGUI):
             l[i][j] = -1
             num_white += 1
             self.canvas.itemconfig(self.count_num[1], text=num_white)
-
             num += 1
         s.append((i, j))  # 悔棋序列
         # print(s)
